@@ -1,14 +1,20 @@
 import Link from 'next/link'
 
 export default function Home({ posts }) {
-  console.log(posts);
+  console.log(posts)
   return (
     <div>
       <h1>Olá, mundo!</h1>
-      <ul key={posts.nodes[0].noticias.titulo}>
-        <Link href={`/posts/${posts.nodes[0].slug}`}>
-          <li>{posts.nodes[0].noticias.titulo}</li>
-        </Link>
+      <ul>
+        {
+          posts.nodes.map(post => {
+            return (
+              <Link href={`/posts/${post.slug}`}>
+                <li>{post.noticias.titulo}</li>
+              </Link>
+            )
+          })
+        }
       </ul>
     </div>
   )
