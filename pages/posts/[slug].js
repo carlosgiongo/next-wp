@@ -1,10 +1,11 @@
-export default function Post( data ){
+export default function Post(data) {
 
     const post = data.post;
-
+    console.log(post)
     return (
         <div>
-            <h1>opa</h1>
+            <h1>{post.noticias.titulo}</h1>
+            <h3>{post.noticias.corpo}</h3>
         </div>
     )
 
@@ -12,24 +13,20 @@ export default function Post( data ){
 
 export async function getStaticProps(context) {
 
-    const res = await fetch('http://headlesswpnext.local/graphql', {
+    const res = await fetch('http://localhost:8888/wordpress_site/graphql', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             query: `
-            query MyQuery {
-                noticias {
-                  nodes {
-                    slug
-                    link
-                    uri
-                    noticias {
-                      corpoNoticia
-                      tituloNoticia
+                query MyQuery {
+                    noticiaBy(slug: "${context.params.slug}") {
+                        slug
+                        noticias {
+                            corpo
+                            titulo
+                        }
                     }
-                  }
                 }
-              }
             `,
         })
     })
@@ -38,7 +35,7 @@ export async function getStaticProps(context) {
 
     return {
         props: {
-            post: json.data,
+            post: json.data.noticiaBy,
         },
     }
 
@@ -46,7 +43,7 @@ export async function getStaticProps(context) {
 
 export async function getStaticPaths() {
 
-    const res = await fetch('http://headlesswpnext.local/graphql', {
+    const res = await fetch('http://localhost:8888/wordpress_site/graphql', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -55,11 +52,9 @@ export async function getStaticPaths() {
                 noticias {
                   nodes {
                     slug
-                    link
-                    uri
                     noticias {
-                      corpoNoticia
-                      tituloNoticia
+                      corpo
+                      titulo
                     }
                   }
                 }
