@@ -1,51 +1,46 @@
-import Head from 'next/head'
-import Image from 'next/image'
+import Link from 'next/link'
 
-export default function Home({posts}) {
-  console.log({posts});
+export default function Home({ posts }) {
+  console.log(posts);
   return (
     <div>
-    <h1>Olá, mundo!</h1>
-    {
-      posts.nodes.map(post => {
-        return(
-          <ul key={post.uri}>
-            <li>{post.noticias.tituloNoticia}</li>
-          </ul>
-        )  
-      })
-    }
+      <h1>Olá, mundo!</h1>
+      <ul key={posts.nodes[0].noticias.titulo}>
+        <Link href={`/posts/${posts.nodes[0].slug}`}>
+          <li>{posts.nodes[0].noticias.titulo}</li>
+        </Link>
+      </ul>
     </div>
   )
 }
 
-export async function getStaticProps(){
+export async function getStaticProps() {
 
-  const res = await fetch('http://localhost/wordpress-site/graphql', {
+  const res = await fetch('http://localhost:8888/wordpress_site/graphql', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       query: `
       query MyQuery {
         noticias {
           nodes {
-            uri
+            slug
             noticias {
-              corpoNoticia
-              tituloNoticia
+              corpo
+              titulo
             }
           }
         }
       }
       `,
-    })  
+    })
   })
 
   const json = await res.json()
 
   return {
-    props:{
-      posts: json.data.noticias,
+    props: {
+      posts: json.data.noticias
     }
   }
 }
